@@ -1,0 +1,22 @@
+{
+  "name": "ld47-3d",
+  "version": "1.0.0",
+  "description": "Ludum Dare 47 entry",
+  "main": "index.js",
+  "scripts": {
+    "dev": "webpack --mode development && webpack-dev-server --mode development",
+    "build": "webpack --mode production && webpack-dev-server --mode production"
+  },
+  "author": "Javier Arevalo",
+  "license": "ISC",
+  "dependencies": {
+    "three": "^0.121.1"
+  },
+  "devDependencies": {
+    "ts-loader": "^8.0.4",
+    "typescript": "^4.0.3",
+    "webpack": "^4.44.2",
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0"
+  }
+}
