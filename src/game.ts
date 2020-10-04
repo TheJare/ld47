@@ -3,6 +3,13 @@ import { Vector3 } from "three";
 
 import Tunnel from "./tunnel";
 
+const PLAYER_SIZE = 0.05;
+const OBSTACLE_SIZE = 0.03;
+const TUNNEL_RADIUS = 0.2;
+const OBSTACLE_TIMER = 0.2;
+const MAX_SPEED = 0.01;
+const SPEED_ACCELERATION = 0.001;
+
 export default class Game {
     private renderer: THREE.WebGLRenderer;
     private scene: THREE.Scene;
@@ -61,16 +68,16 @@ export default class Game {
         this.scene.add(light);
 
         // Objects
-        this.tunnel = new Tunnel(this.scene);
+        this.tunnel = new Tunnel(this.scene, TUNNEL_RADIUS);
         this.tunnel.setMaterial(true);
 
-        const geom = new THREE.SphereBufferGeometry(0.05, 32, 32);
+        const geom = new THREE.SphereBufferGeometry(PLAYER_SIZE, 32, 32);
         const mat = new THREE.MeshPhongMaterial({
             color: "#FFFFFF",
         });
         this.player = new THREE.Mesh(geom, mat);
 
-        this.enemyMesh = new THREE.SphereBufferGeometry(0.03, 6, 6);
+        this.enemyMesh = new THREE.SphereBufferGeometry(OBSTACLE_SIZE, 6, 6);
         this.enemyMat = new THREE.MeshLambertMaterial({
             color: "#ff00ff",
         });
@@ -114,10 +121,14 @@ export default class Game {
     }
 
     public onWindowResize(w: number, h: number): void {
-        this.screenSize.set(w, h);
-        this.renderer.setSize(w, h);
-        this.camera.aspect = w / h;
-        this.camera.updateProjectionMatrix();
+        if (w != this.screenSize.x || h != this.screenSize.y)
+        {
+            this.screenSize.set(w, h);
+            this.renderer.setSize(w, h);
+            this.camera.aspect = w / h;
+            this.camera.fov = 45*Math.max(1, h / w);
+            this.camera.updateProjectionMatrix();
+        }
     }
 
     public onMouseMove(x: number, y: number): void {
@@ -150,7 +161,7 @@ export default class Game {
         } else {
             axis = new Vector3(0, -dir.z, dir.y);
         }
-        axis = axis.normalize().applyAxisAngle(dir, a).multiplyScalar(0.185);
+        axis = axis.normalize().applyAxisAngle(dir, a).multiplyScalar(TUNNEL_RADIUS-OBSTACLE_SIZE/2);
 
         let mesh = new THREE.Mesh(this.enemyMesh, this.enemyMat);
         this.scene.add(mesh);
@@ -161,7 +172,7 @@ export default class Game {
     private checkObstacles(): boolean {
         let crashed = false;
         let d = this.player.position;
-        let r = 0.02*0.02 + 0.05*0.05;
+        let r = (OBSTACLE_SIZE*OBSTACLE_SIZE + PLAYER_SIZE*PLAYER_SIZE)/2;
         for (let i = this.obstacles.length-1; i >= 0; i--) {
             let o = this.obstacles[i];
             if (d.distanceToSquared(o.position) < r) {
@@ -193,17 +204,17 @@ export default class Game {
 
         let right = new Vector3().crossVectors(playerDirection, up);
         right.applyAxisAngle(playerDirection, this.playerRot);
-        this.player.position.copy(right.multiplyScalar(0.2).add(playerRotCenter));
+        this.player.position.copy(right.multiplyScalar(TUNNEL_RADIUS).add(playerRotCenter));
     }
 
     public update(dt: number): void {
         this.tpos = (this.tpos + dt * this.speed) % 1;
-        this.speed = Math.min(0.01, this.speed + dt*0.001);
+        this.speed = Math.min(MAX_SPEED, this.speed + dt * SPEED_ACCELERATION);
 
         if (this.playing) {
             this.newObstacleTimer += dt;
-            while (this.newObstacleTimer >= 0.2) {
-                this.newObstacleTimer -= 0.2;
+            while (this.newObstacleTimer >= OBSTACLE_TIMER) {
+                this.newObstacleTimer -= OBSTACLE_TIMER;
                 this.AddObstacle();
             }
             if (this.checkObstacles()) {
@@ -214,6 +225,8 @@ export default class Game {
             this.scoreUIel.innerText = Math.floor(this.score).toString();
         }
         this.setTunnelPos(this.tpos);
+        // iOS add to homescreen is not sending resizes properly, so check always
+        this.onWindowResize(window.innerWidth, window.innerHeight);
         this.renderer.render(this.scene, this.camera);
     }
 }

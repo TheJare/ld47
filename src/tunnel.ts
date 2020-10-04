@@ -7,20 +7,18 @@ export default class Tunnel {
     wireMat: THREE.Material;
     flatMat: THREE.Material;
 
-    constructor(parentScene: THREE.Scene) {
+    constructor(parentScene: THREE.Scene, radius: number) {
         this.curve = new TorusKnotCurve(5, 7, 9);
         this.curve.arcLengthDivisions = 1000;
         this.curve.updateArcLengths();
-        const geom = new THREE.TubeBufferGeometry(this.curve, 920, 0.2, 32, true);
+        const geom = new THREE.TubeBufferGeometry(this.curve, 920, radius, 32, true);
         this.flatMat = new THREE.MeshPhongMaterial({
             color: "#FFFFFF",
             flatShading: true,
-            side: THREE.BackSide,
-            // wireframe: true
+            side: THREE.BackSide
         });
         this.wireMat = new THREE.MeshBasicMaterial({
             color: "#FFFFFF",
-            side: THREE.BackSide,
             wireframe: true
         });
         this.mesh = new THREE.Mesh(geom, this.wireMat);
