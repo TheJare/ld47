@@ -4,6 +4,8 @@ Not much inspiration with this theme, so that's all I got.
 
 Move the mouse / drag to move the ball. Avoid obstacles.
 
+Play it at [itch.io](https://thejare.itch.io/ld47-stuck-in-a-loop)
+
 As usual, I've tried to make it as compatible as possible even
 with mobile devices.
 
