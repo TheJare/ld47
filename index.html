@@ -2,19 +2,37 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no,shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, shrink-to-fit=no, minimum-scale=1, maximum-scale=1, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="description" content="Ludum Dare 47 entry">
     <meta name="author" content="jare">
     <title>Ludum Dare 47: Stuck in a Loop</title>
     <style>
-        body {margin: 0; overflow:hidden}
+        body {margin: 0; overflow:hidden; color: white; font-family: Helvetica, Arial, sans-serif;overscroll-behavior-y: none; position: fixed;user-select: none;-webkit-user-select: none; -moz-user-select: none;}
         canvas {display:block}
+        #ui {position:absolute; top:0; left:0; width:100%; height:100%; pointer-events: none;touch-action: none;}
+        #menu-ui > #title {position: absolute; top: 50%; left: 50%; transform: translate(-50%, -100%); font-size: 6em; text-shadow: 1px 1px 3px blue;}
+        #menu-ui > #info {position: absolute; right: 0; bottom: 0; padding: 1em 2em; text-align: right;}
+        #score {position: absolute; left: 0; top: 0; padding: 0.25em 1em;}
     </style>
     <script src="dist/bundle.js"></script>
   </head>
   <body>
       <div id="game">
         <canvas id="canvas"></canvas>
+        <div id="ui">
+          <div id="menu-ui">
+            <h1 id="title">Stuck in a Loop</h1>
+            <h2 id="info">A Ludum Dare 47 entry<br/>
+                by Javier Arévalo</h2>
+            <h1 id="score">High Score: <span id="hiscore-text">0</span></h1>
+          </div>
+          <div id="ingame-ui">
+            <h1 id="score">Score: <span id="score-text">0</span></h1>
+          </div>
+        </div>
       </div>
   </body>
 </html>
